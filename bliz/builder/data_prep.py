@@ -5,17 +5,20 @@ from time import time
 
 def prepare_data_for_training(
     df: pd.core.frame.DataFrame,
-    kpi_column: str,
-    index_column: str,
-    validation_test_size: float,
+    target: str,
+    index_column: str=None,
+    validation_test_size: float=0.2,
     verbose: bool=False,
 ):  
-    df_ = df.set_index(index_column)
-    target = df_[kpi_column]
-    data = df_.drop(kpi_column, axis=1)
+    if index_column:
+        _df = df.set_index(index_column)
+    else:
+        _df = df
+    _target = _df[target]
+    _data = _df.drop(target, axis=1)
     _x, validation_x, _y, validation_y = train_test_split(
-        data,
-        target,
+        _data,
+        _target,
         test_size=validation_test_size,
         random_state=int(time()),
     )

@@ -4,12 +4,12 @@ import json
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
-from utils import validate_multiple_lists_length, close_enough, parse_ndarray_as_float_list
-from experiment import Experiment
-from simulation_data import Metrics
-from metrics import discriminability, divergency, certainty
-from plotting.hist import save_multiple_hist, save_single_hist
-from plotting.result_data import ResultData
+from bliz.evaluation.utils import validate_multiple_lists_length, close_enough, parse_ndarray_as_float_list
+from bliz.evaluation.experiment import Experiment
+from bliz.evaluation.simulation_data import Metrics
+from bliz.evaluation.metrics import discriminability, divergency, certainty
+from bliz.evaluation.plotting.hist import save_multiple_hist, single_hist
+from bliz.evaluation.plotting.result_data import ResultData
 
 
 class MonteCarloSimulation(object):
@@ -138,8 +138,7 @@ class MonteCarloSimulation(object):
             experiment_id = "experiment_{}".format(i)
             experiment_summery[experiment_id] = {
                 "real": parse_ndarray_as_float_list(exp.experiment_data.Real),
-                "model":
-                parse_ndarray_as_float_list(exp.experiment_data.Model),
+                "model": parse_ndarray_as_float_list(exp.experiment_data.Model),
                 "mean": parse_ndarray_as_float_list(exp.experiment_data.Mean),
                 "rand": parse_ndarray_as_float_list(exp.experiment_data.Rand),
                 "others": {
@@ -150,7 +149,7 @@ class MonteCarloSimulation(object):
         with open(path, 'w+') as output_file:
             output_file.write(json.dumps(experiment_summery))
 
-    def plot(self, path):
+    def plot(self, path=None, title=None):
         """plots simulation histograms
     
         Args:
@@ -161,6 +160,9 @@ class MonteCarloSimulation(object):
             bins = np.linspace(0, min(1.0, max(max_scores)),
                                max(int(len(self.scores["model"]) / 10), 100))
             plots = [ResultData(k, v, None) for k, v in self.scores.items()]
-            save_single_hist(plots, path, bins)
+            if path:
+                single_hist(data=plots, bins=bins, path=path)
+            else:
+                return single_hist(data=plots, bins=bins, title=title)
         except Exception as e:
             raise e

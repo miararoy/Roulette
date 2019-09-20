@@ -28,10 +28,10 @@ def discriminability(
         d(float): the rate of discrimination
 
     """
-    A = WD(a, rand)
+    # A = WD(a, rand)
     B = WD(a, mean)
     C = WD(mean, rand)
-    return (A + B) / C
+    return B / C
 
 
 def certainty(

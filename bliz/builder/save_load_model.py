@@ -69,5 +69,4 @@ def load_model(
         spec
     )
     spec.loader.exec_module(model)
-    print(model.__modeldoc__)
     return model.Model

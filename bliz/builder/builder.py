@@ -1,94 +1,34 @@
-from time import time, sleep
-import importlib.util
-import argparse
-from pprint import pprint
 import os
 import json
 import operator
 import random
 import pickle
-import progressbar
+from pprint import pprint
+from time import time, sleep
+import importlib.util
+import argparse
 
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import pandas as pd
 import numpy as np
 import seaborn as sns
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 from sklearn.metrics import mean_squared_error, mean_absolute_error, roc_curve, auc
 from sklearn.utils import shuffle
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 
-from ehmodelbuilder.data_prep import prepare_data_for_training
-from ehmodelbuilder.save_load_model import load_model
-from ehmodelbuilder.utils import min_max_norm
+from bliz.builder.data_prep import prepare_data_for_training
+from bliz.builder.save_load_model import load_model
+from bliz.builder.utils import min_max_norm
+from bliz.evaluation import MonteCarloSimulation, weighted_interpolated_error
+from bliz.logger import Logger
 
-from ehmodelevaluation import MonteCarloSimulation, weighted_interpolated_error
-from ehetlextract.candidates import Candidates
-from ehlogger.ehlogger import Logger
+logger = Logger("builder").get_logger()
 
 
 BUILD_DIR_NAME = "build"
-
-
-def _create_evaluation_plot_with_rp(y: np.ndarray, y_pred: np.ndarray):
-    _y_pred = min_max_norm(y_pred)
-    logger = Logger("evaluation plot").get_logger()
-    val_pred = pd.concat([pd.Series(y),pd.Series(_y_pred)],axis=1)
-    val_pred.columns = ['test','pred']
-
-
-    total_points = len(y)
-    tp = val_pred[(val_pred.test>0.5)&(val_pred.pred>0.5)].shape[0]
-    tn = val_pred[(val_pred.test<0.5)&(val_pred.pred<0.5)].shape[0]
-    fn = val_pred[(val_pred.test>0.5)&(val_pred.pred<0.5)].shape[0]
-    fp = val_pred[(val_pred.test<0.5)&(val_pred.pred>0.5)].shape[0]
-    try:
-        recall = round(tp/(tp+fn),2)
-    except ZeroDivisionError:
-        logger.warn("devision by zero in calcaulatin recall")
-        recall = -1.0
-    try:
-        precision = round(tp/(tp+fp),2)
-    except ZeroDivisionError:
-        logger.warn("devision by zero in calcaulatin precision")
-        precision = -1.0
-    try:
-        n_precision = round(tn/(tn+fn),2)
-    except ZeroDivisionError:
-        logger.warn("devision by zero in calcaulatin precision")
-        precision = -1.0
-    try:
-        specificity = round(tn/(tn+fp),2)
-    except ZeroDivisionError:
-        logger.warn("devision by zero in calcaulatin specificity")
-        precision = -1.0
-
-    sns_plot = sns.regplot(
-        y=_y_pred, 
-        x=y,
-        color="skyblue",
-        fit_reg=False
-    ).set_title(label="test set: recall = {rec}, precision = {pre}, specificity = {specificity}, n_precision = {n_pre}, N = {n}".format(
-        rec=recall, pre=precision, specificity=specificity, n_pre=n_precision, n=total_points
-    ),
-        fontdict={'fontsize': 10}
-    )
-
-    axes = sns_plot.axes
-    axes.set_ylim(0,1)
-    axes.set_xlim(0,1)
-    axes.set(xlabel='real', ylabel='prediction')
-
-    axes.axhline(0.5, ls='--', c="r")
-    axes.axvline(0.5, ls='--', c='r')
-    plt.text(0.75, 0.75, round(tp/total_points,2), color='r')
-    plt.text(0.2, 0.75, round(fp/total_points,2), color='r')
-    plt.text(0.75, 0.2, round(fn/total_points,2), color='r')
-    plt.text(0.2, 0.2, round(tn/total_points,2), color='r')
-    return plt, precision, recall, n_precision, specificity
-
-
 
 class RegressionBuilder(object):
 
@@ -111,22 +51,22 @@ class RegressionBuilder(object):
     def build(
         self, 
         n_experiments: int,
-        target_col: str,
-        candidate_col: str
+        target: str,
+        index: str=None
     ):  
-        self.target_col = target_col
-        self.candidate_col = candidate_col
+        self.target_col = target
+        self.candidate_col = index
         self.logger.info("Initiating {} Epochs".format(n_experiments))
         Model = load_model(self.path_to_model_folder)
         self.MC_simulation = MonteCarloSimulation(self.sim_weights)
-        with progressbar.ProgressBar(max_value=n_experiments) as bar:
+        with tqdm(total=n_experiments) as bar:
             i = 0
             while i < n_experiments:
 
                 X, y, v_X, v_y = prepare_data_for_training(
                     df=self.train_data,
-                    kpi_column=target_col,
-                    index_column=candidate_col,
+                    target=target,
+                    index_column=index,
                     validation_test_size=random.uniform(0.1, 0.2),
                 )
 
@@ -146,27 +86,26 @@ class RegressionBuilder(object):
                     other_models = {
                         "linear_regression":lr.predict(v_X)
                     }
-                print(other_models)
                 self.MC_simulation.load_experiment(
                     v_y,
                     y,
                     this_prediction,
                     others=other_models
                 )
-                bar.update(i)
+                bar.update(1)
                 i+=1
     
-    def evaluate(self, weights=None, bins=None, error_type='abs'):
+    def evaluate(self, weights=None, bins=None, error_type='mse'):
         if bins is None:
             self.logger.warn("bins value is None using default == [0, 0.3, 0.7, 1]")
             _bins = [0, 0.3, 0.7, 1]
         if weights is None:
-            self.logger.warn("weights value is None using default == [[1,3,5],[2,1,2],[3,2,1]]")
+            self.logger.warn("weights value is None using default == [[1,1,1],[1,1,1],[1,1,1]]")
             _weights = np.asarray(
                 [
-                    [1,3,5],
-                    [2,1,2],
-                    [3,2,1],
+                    [1,1,1],
+                    [1,1,1],
+                    [1,1,1],
                 ],
                 order='C'
             )
@@ -178,7 +117,7 @@ class RegressionBuilder(object):
     def finalize_model(self,):
         X, y, _, _ = prepare_data_for_training(
             df=self.train_data,
-            kpi_column=self.target_col,
+            target=self.target_col,
             index_column=self.candidate_col,
             validation_test_size=0.0000001,
         )
@@ -189,7 +128,7 @@ class RegressionBuilder(object):
             try:
                 eval_X, eval_y, _, _ = prepare_data_for_training(
                     df=self.eval_data,
-                    kpi_column=self.target_col,
+                    target=self.target_col,
                     index_column=self.candidate_col,
                     validation_test_size=0.0000001,
                 )
@@ -220,6 +159,9 @@ class RegressionBuilder(object):
         else:
             self.logger.error("evaluation plot does not exist, if there is an evaluation set or use .finalize_model() method")
             return None
+
+    def get_plot(self, title=None):
+        return self.MC_simulation.plot(title=title)
 
     def save(self, path:str=None):
         if path is None:

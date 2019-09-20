@@ -32,16 +32,14 @@ def save_multiple_hist(
         raise e
 
 
-def save_single_hist(
+def single_hist(
         data: list,
-        path: str,
         bins: list,
+        path: str = None,
+        title: str = None,
         name: str = "model",
 ):
     try:
-        if not os.path.exists(path):
-            os.makedirs(path)
-        plot_name = "{}_plot.png".format(name)
         for d in data:
             if d._fields == ('name', 'data', 'color'):
                 plot = sns.distplot(
@@ -49,12 +47,21 @@ def save_single_hist(
                     bins=bins,
                     color=d.color,
                     kde_kws={"label": d.name})
-                plot_path = os.path.join(path, plot_name)
+                if title:
+                    plot.set_title(title)
             else:
                 raise ValueError("data should be of type RestultData")
-        print("saving... {}".format(plot_path))
-        plot.set_xlim(0,0.5)
-        plot.figure.savefig(plot_path, dpi=300)
+        # plot.set_xlim(0,0.5)
+        if path:
+            if not os.path.exists(path):
+                os.makedirs(path)
+            print("saving... {}".format(plot_path))
+            plot_path = os.path.join(path, plot_name)
+            plot_name = "{}_plot.png".format(name)
+            plot.figure.savefig(plot_path, dpi=300)
+        else:
+            return plot
     except Exception as e:
         print("save_single_hist FAILED")
         raise e
+
