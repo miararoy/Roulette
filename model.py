@@ -15,7 +15,8 @@ class Model(BaseModel):
         self.model = GridSearchCV(
             RandomForestRegressor(),
             tuned_params,
-            cv=5
+            cv=5,
+            iid=False
         )
 
     def fit(self,X,y):

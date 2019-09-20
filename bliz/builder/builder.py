@@ -59,7 +59,7 @@ class RegressionBuilder(object):
         self.logger.info("Initiating {} Epochs".format(n_experiments))
         Model = load_model(self.path_to_model_folder)
         self.MC_simulation = MonteCarloSimulation(self.sim_weights)
-        with tqdm(total=n_experiments) as bar:
+        with tqdm(total=n_experiments, desc=" Training Model") as bar:
             i = 0
             while i < n_experiments:
 
