@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from time import time
 
@@ -16,12 +17,15 @@ def prepare_data_for_training(
         _df = df
     _target = _df[target]
     _data = _df.drop(target, axis=1)
-    _x, validation_x, _y, validation_y = train_test_split(
-        _data,
-        _target,
-        test_size=validation_test_size,
-        random_state=int(time()),
-    )
+    if validation_test_size == 0:
+        _x, validation_x, _y, validation_y = _data, pd.DataFrame(), _target, pd.Series()
+    else:
+        _x, validation_x, _y, validation_y = train_test_split(
+            _data,
+            _target,
+            test_size=validation_test_size,
+            random_state=int(time()),
+        )
     if verbose:
         print("shape of training data = {}".format(_x.shape))
         print("shape of training data target = {}".format(_y.shape))

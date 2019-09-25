@@ -1,5 +1,6 @@
 import os
 import json
+import threading
 
 import numpy as np
 from sklearn.metrics import mean_squared_error
@@ -16,9 +17,19 @@ class MonteCarloSimulation(object):
     """facilitates the experiments conducted, and calculating the metrics
     """
 
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls):
+        if MonteCarloSimulation._instance is None:
+            with MonteCarloSimulation._lock:
+                if MonteCarloSimulation._instance is None:
+                    MonteCarloSimulation._instance = super(MonteCarloSimulation, cls).__new__(cls)
+        return MonteCarloSimulation._instance
+
     def __init__(
             self,
-            W: list=[0.33, 0.33, 0.33],
+            W: list=[0.33333, 0.33333, 0.33333],
     ):
         """initiates monte carlo simulation
     
@@ -50,7 +61,8 @@ class MonteCarloSimulation(object):
         """loading a single experiment to simulation
     
         Args:
-            real(list): list of ground truth results
+            real(list): list of ground truth results of the test set
+            real_trained(list): list of ground truth results of the training set
             model(list): list of subjected-model predictions
             rand(int): scale of random samples, ir R in (0, n), defaults to 1
             others(dict): dictionary of other models predictions.
@@ -58,7 +70,7 @@ class MonteCarloSimulation(object):
         self.experiments.append(
             Experiment(real, real_trained, model, rand, others))
 
-    def digest(self, metric=mean_squared_error):
+    def digest(self, metric):
         """calculates the full simulation results on the experiments
         loaded thus far
     
@@ -102,12 +114,14 @@ class MonteCarloSimulation(object):
         Returns:
             metrics (dict): dictionary of metrics
         """
-        if not self.metrics: self.digest()
-        return {
-            "discriminability": self.metrics.Discriminability,
-            "certainty": self.metrics.Certainty,
-            "divergency": self.metrics.Divergency,
-        }
+        if self.metrics: 
+            return {
+                "discriminability": self.metrics.Discriminability,
+                "certainty": self.metrics.Certainty,
+                "divergency": self.metrics.Divergency,
+            }
+        else:
+            return None
 
     def metrics_to_json(
             self,
@@ -123,6 +137,7 @@ class MonteCarloSimulation(object):
         # with open(os.path.join(path, "{}.json".format(filename)), 'w+') as output_file:
         with open(path, 'w+') as output_file:
             output_file.write(json.dumps(self.metrics_as_dict()))
+
 
     def save_experiment_summery(
             self,
@@ -161,7 +176,7 @@ class MonteCarloSimulation(object):
                                max(int(len(self.scores["model"]) / 10), 100))
             plots = [ResultData(k, v, None) for k, v in self.scores.items()]
             if path:
-                single_hist(data=plots, bins=bins, path=path)
+                single_hist(data=plots, bins=bins, path=path, title=title)
             else:
                 return single_hist(data=plots, bins=bins, title=title)
         except Exception as e:

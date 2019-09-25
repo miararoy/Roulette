@@ -1,5 +1,5 @@
-from os import path, makedirs
-from sklearn.externals import joblib
+import os
+import joblib
 import pickle
 import importlib
 
@@ -14,47 +14,39 @@ class ModelFileHandler(object):
 
     def save(
         self,
-        _dir=None,
+        path=None,
     ):  
         model_name = self.model.model_name
-        model_directory = path.join(_dir, model_name)
-        if not path.exists(model_directory):
-            makedirs(model_directory)
-        self.path = path.join(model_directory, "{}.joblib".format(model_name))
+        model_dir = os.path.join(path, model_name)
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+        model_path = os.path.join(model_dir, "{}.joblib".format(model_name))
         try:
             out = self.model.model
-            print("trying to pickle {x} of type {xx}".format(
-                x=out,
-                xx=type(out)
-            ))
-            with open(self.path, 'wb') as model_file:
+            print("trying to pickle {} of type {}".format(out, type(out)))
+            with open(model_path, 'wb') as model_file:
                 joblib.dump(
                     out,
                     model_file,
                 )
-            try:
-                if self.model.pca:
-                    self.path_pca = path.join(model_directory, "{}_pca.joblib".format(model_name))
-                    out_pca = self.model.pca
-                    with open(self.path_pca, 'wb') as pca_file:
-                        joblib.dump(
-                            out_pca,
-                            pca_file,
-                        )
-            except:
-                print("will not save model PCA")
-            return model_directory
+            return model_dir
         except pickle.PicklingError as e:
-            print("Cannot picke model at {p} due to {e}".format(p=self.path, e=e)) 
-            return model_directory
+            print("Cannot picke model at {p} due to {e}".format(p=model_path, e=e)) 
+            return model_dir
 
 
     def load(
         self,
-        model_path: str,
+        model_dir: str,
     ):
+        model_name = "{}.joblib".format(os.path.split(model_dir)[-1])
+        model_path = os.path.join(model_dir, model_name)
+        if not os.path.exists(model_path):
+            raise FileExistsError("file {} is not found in folder {} ".format(
+                model_name, model_dir
+            )+ "cannot load")
         with open(model_path, 'rb') as model_file:
-            return joblib.load(model_file), ".".join(model_path.split('/')[-1].split('.')[:-1])
+            return joblib.load(model_file)
 
 
 def load_model(
@@ -63,7 +55,7 @@ def load_model(
     # LOAD MODEL
     spec = importlib.util.spec_from_file_location(
         name='model',
-        location=path.join(model_source, "model.py")
+        location=os.path.join(model_source, "model.py")
     )
     model = importlib.util.module_from_spec(
         spec

@@ -28,10 +28,14 @@ def discriminability(
         d(float): the rate of discrimination
 
     """
-    # A = WD(a, rand)
-    B = WD(a, mean)
-    C = WD(mean, rand)
-    return B / C
+    if np.mean(a) > np.mean(mean):
+        return 0.0
+    else:
+        MX =  WD(np.asarray([0.0] * len(a)), mean)
+        B = WD(a, mean)
+        C = WD(mean, rand)
+
+        return (B/C) / (MX/C)
 
 
 def certainty(
@@ -42,6 +46,7 @@ def certainty(
 
     Args:
         a (array-like): the error distribution of model
+        rand (array-like): the error distribution against `guessing` random values
 
     Returns:
         c (float): the std^-1
@@ -216,7 +221,7 @@ def get_weight_metric(bins, weights: np.ndarray,
 
 
 def weighted_interpolated_error(
-        r_vector,
+        size,
         bins,
         weights: np.ndarray,
         error_type: str,
@@ -234,7 +239,7 @@ def weighted_interpolated_error(
                                  with accordance to bins, weights and how
     """
     if error_type in ERR_TYPES:
-        new_size = max(9, int(round(np.sqrt(len(r_vector)))))
+        new_size = max(9, size)
         new_bins = _interpolate_bins(bins, new_size + 1)
         new_weights = _interpolate_weights(weights, new_size)
         return _weighted_error(new_bins, new_weights, how=error_type)

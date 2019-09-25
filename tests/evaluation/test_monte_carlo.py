@@ -1,13 +1,15 @@
 import numpy as np
+from sklearn.metrics import mean_squared_error
 
-from ehmodelevaluation import MonteCarloSimulation
-from ehmodelevaluation import close_enough
+
+from bliz.evaluation.monte_carlo import MonteCarloSimulation
+from bliz.evaluation.utils import close_enough
 
 real = [1, 2, 3]
 model = [1.1, 2.2, 3.3]
 rand = [4, 5, 6]
 
-MC = MonteCarloSimulation([1 / 3, 1 / 3, 1 / 3])
+MC = MonteCarloSimulation()
 MC.load_experiment(
     real,
     np.asanyarray([real]),
@@ -24,7 +26,7 @@ MC.load_experiment(
         "rand_a": rand,
         "rand_b": real
     })
-MC.digest()
+MC.digest(mean_squared_error)
 
 
 def test_monte_carlo_score():
@@ -41,7 +43,6 @@ def test_monte_carlo_score():
 def test_monte_carlo_metrics():
     metrics = MC.get_metrics()
     assert metrics.Certainty == -1
-    # assert close_enough(metrics.Discriminability, 1.1)
 
 
 def test_as_dict():
@@ -85,7 +86,7 @@ def test_plotting():
                            "rand_a": [0.3, 0.3, 0.3],
                            "rand_b": [0.1, 0.1, 9]
                        })
-    MC.digest()
+    MC.digest(mean_squared_error)
     try:
         MC.plot("/tmp")
     except Exception:

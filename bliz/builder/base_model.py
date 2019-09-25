@@ -31,13 +31,6 @@ class BaseModel(ABC):
     ) -> Union[DataFrame, np.ndarray, list]:
         pass
 
-    # @abstractmethod
-    # def score(
-    #     self,
-    #     y_real,
-    # ):  
-    #     pass
-
     
     def save(
         self,
@@ -50,5 +43,5 @@ class BaseModel(ABC):
         self,
         model_path,
     ):
-        self.model, self.model_name = ModelFileHandler().load(model_path)
+        self.model = ModelFileHandler().load(model_path)
 

@@ -3,8 +3,8 @@ import importlib
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
-from ehmodelevaluation import close_enough
-from ehmodelevaluation import Experiment
+from bliz.evaluation.utils import close_enough
+from bliz.evaluation.experiment import Experiment
 
 real = [1, 2, 3]
 model = [1.1, 2.2, 3.3]

@@ -1,9 +1,9 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from ehmodelevaluation import _interpolate_bins,\
-                              close_enough,\
-                              weighted_interpolated_error,\
-                              get_weight_metric
+from bliz.evaluation.metrics import _interpolate_bins,\
+                                    weighted_interpolated_error,\
+                                    get_weight_metric
+from bliz.evaluation.utils import close_enough
 
 
 def test_interploate_bins_unitary():
@@ -31,9 +31,9 @@ def test_weighted_interpolated_error_sanity():
     ], order='C')
 
     assert mean_squared_error(real, pred) < weighted_interpolated_error(
-        real, bins, W, 'mse')(real, pred)
+        len(real), bins, W, 'mse')(real, pred)
     assert mean_absolute_error(real, pred) < weighted_interpolated_error(
-        real, bins, W, 'abs')(real, pred)
+        len(real), bins, W, 'abs')(real, pred)
 
 
 def test_get_weight_metric():

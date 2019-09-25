@@ -51,13 +51,12 @@ def single_hist(
                     plot.set_title(title)
             else:
                 raise ValueError("data should be of type RestultData")
-        # plot.set_xlim(0,0.5)
         if path:
             if not os.path.exists(path):
                 os.makedirs(path)
-            print("saving... {}".format(plot_path))
-            plot_path = os.path.join(path, plot_name)
             plot_name = "{}_plot.png".format(name)
+            plot_path = os.path.join(path, plot_name)
+            print("saving... {}".format(plot_path))
             plot.figure.savefig(plot_path, dpi=300)
         else:
             return plot

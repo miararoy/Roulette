@@ -6,10 +6,11 @@ import numpy as np
 
 from sklearn.metrics import mean_squared_error
 from scipy.stats import entropy
-from .simulation_data import ExperimentData, Score
-from .utils import validate_multiple_lists_length
-from .constants import MetricsConstants
-from .metrics import WD
+
+from bliz.evaluation.simulation_data import ExperimentData, Score
+from bliz.evaluation.utils import validate_multiple_lists_length
+from bliz.evaluation.constants import MetricsConstants
+from bliz.evaluation.metrics import WD
 
 random.seed(int(time()) % 10**4)
 
@@ -123,11 +124,11 @@ class Experiment(object):
         divergence = _divergence_by_wd(self.experiment_data.Model,
                                        self.experiment_data.Real)
         self.experiment_results = Score(
-            metric(self.experiment_data.Model, self.experiment_data.Real),
-            metric(self.experiment_data.Rand, self.experiment_data.Real),
-            metric(self.experiment_data.Mean, self.experiment_data.Real),
+            metric(self.experiment_data.Real, self.experiment_data.Model),
+            metric(self.experiment_data.Real, self.experiment_data.Rand),
+            metric(self.experiment_data.Real, self.experiment_data.Mean),
             divergence, {
-                k: metric(v, self.experiment_data.Real)
+                k: metric(self.experiment_data.Real, v)
                 for k, v in self.experiment_data.OtherModels.items()
             })
         return self.experiment_results

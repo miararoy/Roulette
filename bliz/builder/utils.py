@@ -80,3 +80,15 @@ def create_classification_report(y_real, y_pred):
     
 def min_max_norm(y: np.ndarray) -> np.ndarray:
     return (y - y.min()) / (y.max() - y.min())
+
+
+def is_regression_metric(metric: callable) -> bool:
+    real = np.asarray([0.1,0.33,0.44])
+    pred_close = np.asarray([0.11, 0.34, 0.45])
+    pred_far = np.asarray([0.3, 0.6, 0.9])
+    if (not metric(real, real) == 0.0 and 
+        not metric(real, real) < metric(real, pred_close) < metric(real, pred_far)):
+        return False
+    else:
+        return True
+    
