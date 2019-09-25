@@ -1,6 +1,6 @@
 from bliz.evaluation.utils import close_enough,\
-                              validate_multiple_lists_length,\
-                              samples_to_bin_numbers
+    validate_multiple_lists_length,\
+    samples_to_bin_numbers
 
 
 def test_close_enough():

@@ -1,15 +1,15 @@
-import os
+# import os
 import json
 import threading
 
 import numpy as np
-from sklearn.metrics import mean_squared_error
+# from sklearn.metrics import mean_squared_error
 
-from bliz.evaluation.utils import validate_multiple_lists_length, close_enough, parse_ndarray_as_float_list
+from bliz.evaluation.utils import close_enough, parse_ndarray_as_float_list
 from bliz.evaluation.experiment import Experiment
 from bliz.evaluation.simulation_data import Metrics
 from bliz.evaluation.metrics import discriminability, divergency, certainty
-from bliz.evaluation.plotting.hist import save_multiple_hist, single_hist
+from bliz.evaluation.plotting.hist import single_hist
 from bliz.evaluation.plotting.result_data import ResultData
 
 
@@ -24,15 +24,16 @@ class MonteCarloSimulation(object):
         if MonteCarloSimulation._instance is None:
             with MonteCarloSimulation._lock:
                 if MonteCarloSimulation._instance is None:
-                    MonteCarloSimulation._instance = super(MonteCarloSimulation, cls).__new__(cls)
+                    MonteCarloSimulation._instance = super(
+                        MonteCarloSimulation, cls).__new__(cls)
         return MonteCarloSimulation._instance
 
     def __init__(
             self,
-            W: list=[0.33333, 0.33333, 0.33333],
+            W: list = [0.33333, 0.33333, 0.33333],
     ):
         """initiates monte carlo simulation
-    
+
         Args:
             W: weights for ratio between metrics
             bins: list of bin edges
@@ -59,7 +60,7 @@ class MonteCarloSimulation(object):
                         rand=1,
                         others: dict = {}):
         """loading a single experiment to simulation
-    
+
         Args:
             real(list): list of ground truth results of the test set
             real_trained(list): list of ground truth results of the training set
@@ -73,7 +74,7 @@ class MonteCarloSimulation(object):
     def digest(self, metric):
         """calculates the full simulation results on the experiments
         loaded thus far
-    
+
         Args:
             metric(callable): the metric to calculate results on (array-like, array-like) -> float
                               defaults to sklearn.metrics.mean_squared_error
@@ -102,7 +103,7 @@ class MonteCarloSimulation(object):
 
     def get_metrics(self):
         """returns the Metrics namedTuple
-    
+
         Returns:
             metrics (Metrics)
         """
@@ -110,11 +111,11 @@ class MonteCarloSimulation(object):
 
     def metrics_as_dict(self):
         """returns the Metrics as dict
-    
+
         Returns:
             metrics (dict): dictionary of metrics
         """
-        if self.metrics: 
+        if self.metrics:
             return {
                 "discriminability": self.metrics.Discriminability,
                 "certainty": self.metrics.Certainty,
@@ -129,15 +130,15 @@ class MonteCarloSimulation(object):
             # filename: str,
     ):
         """saves MC result metrics as .json file
-    
+
         Args:
             path(str): path to save json file
             filename(str): filename to be used in saving
         """
-        # with open(os.path.join(path, "{}.json".format(filename)), 'w+') as output_file:
+        # with open(os.path.join(path, "{}.json".format(filename)), 'w+') as
+        # output_file:
         with open(path, 'w+') as output_file:
             output_file.write(json.dumps(self.metrics_as_dict()))
-
 
     def save_experiment_summery(
             self,
@@ -166,7 +167,7 @@ class MonteCarloSimulation(object):
 
     def plot(self, path=None, title=None):
         """plots simulation histograms
-    
+
         Args:
             path(str): path to save plots to
         """

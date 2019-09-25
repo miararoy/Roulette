@@ -15,7 +15,8 @@ Doc = namedtuple(
     ]
 )
 
-def compress_regression_results(l, true_condition=lambda x: x>=0.6):
+
+def compress_regression_results(l, true_condition=lambda x: x >= 0.6):
     out = []
     for x in list(l):
         if true_condition(x):
@@ -26,11 +27,11 @@ def compress_regression_results(l, true_condition=lambda x: x>=0.6):
 
 
 def generate_model_documentation(
-    model_version:str,
-    model_type:str,
-    model_algorithm:str,
-    model_parameter_tuning:str=None,
-    model_cv:str=None,
+    model_version: str,
+    model_type: str,
+    model_algorithm: str,
+    model_parameter_tuning: str = None,
+    model_cv: str = None,
 ):
     return (
         "\n---------- Model Details:\n\n" +
@@ -40,7 +41,7 @@ def generate_model_documentation(
         "Model Parameter Tuning == {}\n".format(model_parameter_tuning) +
         "Model CV == {}\n".format(model_cv)
     )
-        
+
 
 def create_classification_report(y_real, y_pred):
     p = compress_regression_results(list(y_pred))
@@ -59,36 +60,36 @@ def create_classification_report(y_real, y_pred):
             rr=y_r_r,
         ))
     print("\n{}".format(
-            classification_report(
-                r,
-                p,
-                target_names=["bottom_tier", "top_tier"],
-            )
-        )   
+        classification_report(
+            r,
+            p,
+            target_names=["bottom_tier", "top_tier"],
+        )
+    )
     )
     tn, fp, fn, tp = confusion_matrix(p, r).ravel()
     print(
-        "tn = {} \n".format(tn/len(p)) +
-        "tp = {} \n".format(tp/len(p)) +
-        "fn = {} \n".format(fn/len(p)) + 
-        "fp = {} \n".format(fp/len(p))
+        "tn = {} \n".format(tn / len(p)) +
+        "tp = {} \n".format(tp / len(p)) +
+        "fn = {} \n".format(fn / len(p)) +
+        "fp = {} \n".format(fp / len(p))
     )
     print(
-        "Precision = {}\n".format(round(tp/(tp+fp), 2)) + 
-        "Recall = {}\n".format(round(tp/(tp+fn), 2))
+        "Precision = {}\n".format(round(tp / (tp + fp), 2)) +
+        "Recall = {}\n".format(round(tp / (tp + fn), 2))
     )
-    
+
+
 def min_max_norm(y: np.ndarray) -> np.ndarray:
     return (y - y.min()) / (y.max() - y.min())
 
 
 def is_regression_metric(metric: callable) -> bool:
-    real = np.asarray([0.1,0.33,0.44])
+    real = np.asarray([0.1, 0.33, 0.44])
     pred_close = np.asarray([0.11, 0.34, 0.45])
     pred_far = np.asarray([0.3, 0.6, 0.9])
-    if (not metric(real, real) == 0.0 and 
-        not metric(real, real) < metric(real, pred_close) < metric(real, pred_far)):
+    if (not metric(real, real) == 0.0 and
+            not metric(real, real) < metric(real, pred_close) < metric(real, pred_far)):
         return False
     else:
         return True
-    

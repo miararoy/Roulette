@@ -3,7 +3,6 @@ from sklearn.metrics import mean_squared_error
 
 
 from bliz.evaluation.monte_carlo import MonteCarloSimulation
-from bliz.evaluation.utils import close_enough
 
 real = [1, 2, 3]
 model = [1.1, 2.2, 3.3]
@@ -79,13 +78,13 @@ def test_plotting():
                        others={
                            "rand_a": [1, 1, 1],
                            "rand_b": [x * 1.22 for x in rand]
-                       })
+    })
     MC.load_experiment([5, 3, 1],
                        np.asarray([5, 3, 1]), [1, 1, 1],
                        others={
                            "rand_a": [0.3, 0.3, 0.3],
                            "rand_b": [0.1, 0.1, 9]
-                       })
+    })
     MC.digest(mean_squared_error)
     try:
         MC.plot("/tmp")

@@ -15,9 +15,9 @@ def validate_multiple_lists_length(*lists) -> bool:
     for l in lists:
         try:
             iter(l)
-        except:
+        except BaseException:
             return False
-        if list_len == -1:  #first list
+        if list_len == -1:  # first list
             list_len = len(l)
         else:
             if list_len != len(l):
@@ -52,7 +52,7 @@ def close_enough(a, b, precision=3) -> bool:
     try:
         iter(a)
         iter(b)
-    except:  # objects are not iterable == scalar
+    except BaseException:  # objects are not iterable == scalar
         return _check_precision(a, b)
     out = True
     for i, j in zip(
@@ -64,23 +64,23 @@ def close_enough(a, b, precision=3) -> bool:
 
 def _sample_to_bin(a, bins):
     """return the bin number of each sample
-    
+
     Args:
         a: list of array like, same length
         bins: list of bin edges
     Retrurns:
-        l: list same length as a containing the bin number instead of values
+        l: list same length as 'a' containing the bin number instead of values
     """
-    l = []
+    bins_list = []
     for x in a:
         x_bin, _ = np.histogram(x, bins)
-        l.append(x_bin.argmax())
-    return l
+        bins_list.append(x_bin.argmax())
+    return bins_list
 
 
 def samples_to_bin_numbers(*lists, bins):
     """return the bin number of each sample
-    
+
     Args:
         lists: list of array like, same length
         bins: list of bin edges

@@ -2,8 +2,8 @@ import scipy as sp
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from .utils import close_enough,\
-                   validate_multiple_lists_length,\
-                   samples_to_bin_numbers
+    validate_multiple_lists_length,\
+    samples_to_bin_numbers
 
 MSE = mean_squared_error
 ABS_ERR = mean_absolute_error
@@ -31,11 +31,11 @@ def discriminability(
     if np.mean(a) > np.mean(mean):
         return 0.0
     else:
-        MX =  WD(np.asarray([0.0] * len(a)), mean)
+        MX = WD(np.asarray([0.0] * len(a)), mean)
         B = WD(a, mean)
         C = WD(mean, rand)
 
-        return (B/C) / (MX/C)
+        return (B / C) / (MX / C)
 
 
 def certainty(
@@ -82,13 +82,13 @@ def _weighted_error(
 
     Args:
         bins (array-like): the bin edges for grouping the r, p vectors
-        weights (np.ndarray): an N X N matrix representing the cost of predicting 
+        weights (np.ndarray): an N X N matrix representing the cost of predicting
                               in different bin
         how (str): should the error be absolute / squared, gets values in ['abs', 'mse']
                    defaults to 'mse'
-    
+
     Returns:
-        _calc_metric (callable): a functions that gets two vectors and returns the calculated error 
+        _calc_metric (callable): a functions that gets two vectors and returns the calculated error
                                  with accordance to bins, weights and how
     """
     if weights.shape == (len(bins) - 1, len(bins) - 1):
@@ -127,7 +127,7 @@ def _resize_matrix_function(mx: np.ndarray, kind='linear'):
         kind (str): type of interpolation, gets values in linear, cubic
 
     Returns:
-        f (callable): an interpolation function 
+        f (callable): an interpolation function
     """
     x = np.linspace(0, 1, mx.shape[0])
     y = np.linspace(0, 1, mx.shape[1])
@@ -141,7 +141,7 @@ def _resize_vector_function(v):
 
     Args:
         v (array-like): a 1d vector
-        
+
     Returns:
         f (callable): an interpolation function in 1d
     """
@@ -160,7 +160,7 @@ def _interpolate_weights(
     Args:
         w (np.ndarray): a cubic matrix of weights
         new_size (int): the new size of output matrix
-        
+
     Returns:
         _w (np.ndarray): a cubic weight matrix with size new_size
     """
@@ -185,7 +185,7 @@ def _interpolate_bins(bins, new_size: int):
     Args:
         bins (array-like): bin edges vector
         new_size (int): the new size of output matrix
-        
+
     Returns:
         new_bins (array-like): a cubic weight matrix with size new_size
     """
@@ -203,7 +203,7 @@ def get_weight_metric(bins, weights: np.ndarray,
         bins(array-like): array of bin edges
         weights(np.ndarray): a small (3X3 usually) matrix of bin-weight errors
         new_size(int): interpolation new size ( > len(bins)-1)
-    
+
     Returns:
         T(tuple[callable, np.ndarray]): a tuple where the first arg is a function to calculate
             weights between two scores and the second is matrix of new weights
@@ -235,7 +235,7 @@ def weighted_interpolated_error(
         error_type(str): type of error to use, (abs/mse)
 
     Returns:
-        _calc_metric (callable): a functions that gets two vectors and returns the calculated error 
+        _calc_metric (callable): a functions that gets two vectors and returns the calculated error
                                  with accordance to bins, weights and how
     """
     if error_type in ERR_TYPES:

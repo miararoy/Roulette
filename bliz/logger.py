@@ -1,6 +1,8 @@
 import logging
 
-log_format = """{"time": "%(asctime)s","level": "%(levelname)s", "log_name": "%(name)s", "function": "%(funcName)s","message": "%(message)s"}"""
+log_format = """{"time": "%(asctime)s","level": "%(levelname)s",
+"log_name": "%(name)s", "function": "%(funcName)s","message": "%(message)s"}""".strip()
+
 
 class Logger(object):
     def __init__(self, name, level="INFO"):

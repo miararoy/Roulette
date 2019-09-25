@@ -1,6 +1,5 @@
 import os
 
-import matplotlib.pyplot as plt
 import seaborn as sns
 
 
@@ -63,4 +62,3 @@ def single_hist(
     except Exception as e:
         print("save_single_hist FAILED")
         raise e
-

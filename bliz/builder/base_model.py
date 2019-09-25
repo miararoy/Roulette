@@ -11,7 +11,7 @@ from bliz.builder.save_load_model import ModelFileHandler
 class BaseModel(ABC):
     def __init__(
         self,
-    ):  
+    ):
         self.model_name = str(int(time()))
         self.model = None
 
@@ -22,26 +22,22 @@ class BaseModel(ABC):
         y
     ) -> None:
         pass
-        
 
-    @abstractmethod    
+    @abstractmethod
     def predict(
         self,
         X,
     ) -> Union[DataFrame, np.ndarray, list]:
         pass
 
-    
     def save(
         self,
         base_path,
     ):
         return ModelFileHandler(model=self).save(base_path)
 
-    
     def load(
         self,
         model_path,
     ):
         self.model = ModelFileHandler().load(model_path)
-

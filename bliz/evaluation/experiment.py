@@ -4,12 +4,8 @@ from collections import namedtuple
 
 import numpy as np
 
-from sklearn.metrics import mean_squared_error
-from scipy.stats import entropy
-
 from bliz.evaluation.simulation_data import ExperimentData, Score
 from bliz.evaluation.utils import validate_multiple_lists_length
-from bliz.evaluation.constants import MetricsConstants
 from bliz.evaluation.metrics import WD
 
 random.seed(int(time()) % 10**4)
@@ -28,7 +24,7 @@ def _divergence_by_wd(dist, ref):
     Args:
         dist(array-like): original distribution
         ref(array-like): refrence distribution
-    
+
     Returns:
         abs_wd
     """
@@ -82,14 +78,15 @@ class Experiment(object):
             real_results: list,
             real_trained_results: np.ndarray,
             model_prediction: list,
-            random_scale,  # if not passed will generate a list in len(real_results) of [0,1) 
+            # if not passed will generate a list in len(real_results) of [0,1)
+            random_scale,
             other_models_predictions: dict):
         """loads experiment data into ExperimentData object
 
         Args:
             real_results(list): real results of this experiments
             real_trained_results(np.ndarray): target vector of the trained data in this experiment
-            model_prediction(list): predictions of the model 
+            model_prediction(list): predictions of the model
             random_scale(int): what is the scale [0, X] from which random results would be selected
             other_models_predictions(dict): a dictionary of other models model_name->list_of_socres
 

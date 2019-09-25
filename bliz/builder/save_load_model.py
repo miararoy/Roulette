@@ -3,19 +3,19 @@ import joblib
 import pickle
 import importlib
 
+
 class ModelFileHandler(object):
     def __init__(
-        self, 
+        self,
         model=None,
     ):
         self.model = model
         self.path = None
 
-
     def save(
         self,
         path=None,
-    ):  
+    ):
         model_name = self.model.model_name
         model_dir = os.path.join(path, model_name)
         if not os.path.exists(model_dir):
@@ -31,9 +31,9 @@ class ModelFileHandler(object):
                 )
             return model_dir
         except pickle.PicklingError as e:
-            print("Cannot picke model at {p} due to {e}".format(p=model_path, e=e)) 
+            print("Cannot picke model at {p} due to {e}".format(
+                p=model_path, e=e))
             return model_dir
-
 
     def load(
         self,
@@ -44,7 +44,7 @@ class ModelFileHandler(object):
         if not os.path.exists(model_path):
             raise FileExistsError("file {} is not found in folder {} ".format(
                 model_name, model_dir
-            )+ "cannot load")
+            ) + "cannot load")
         with open(model_path, 'rb') as model_file:
             return joblib.load(model_file)
 
