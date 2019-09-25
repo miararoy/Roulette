@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from bliz.builder.utils import min_max_norm
 from bliz.logger import Logger

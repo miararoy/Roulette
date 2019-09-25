@@ -36,7 +36,7 @@ def test_monte_carlo_score():
         'rand_b': [64.66666666666667, 0.0]
     }
     for k in expected:
-        if k is not "rand":
+        if k != "rand":
             assert set(MC.scores[k]) & set(expected[k])
 
 
