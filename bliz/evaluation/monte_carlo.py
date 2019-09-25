@@ -3,6 +3,7 @@ import json
 import threading
 
 import numpy as np
+import matplotlib.pyplot as plt
 # from sklearn.metrics import mean_squared_error
 
 from bliz.evaluation.utils import close_enough, parse_ndarray_as_float_list

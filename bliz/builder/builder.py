@@ -130,6 +130,7 @@ class RegressionBuilder(object):
             raise RuntimeError("You must use build() to get results")
 
     def plot(self, title=None):
+        plt.clf()
         self.MC_simulation.plot(title=title)
         plt.show()
 
