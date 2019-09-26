@@ -35,11 +35,14 @@ def _divergence_by_wd(dist, ref):
     else:
         return np.inf
 
+
 def reg_mean(y, size):
     return np.full(size, np.asarray(y).mean())
 
+
 def binary_mean(y, size):
     return np.full(size, np.bincount(y).argmax())
+
 
 def choice_rand(y, size):
     return np.random.choice(y, size=size)
@@ -67,15 +70,13 @@ class Experiment(object):
         'Model',
         'Rand',
         'Mean',
-        'OtherModels',
+        # 'OtherModels',
     ])
 
     Score = namedtuple('Score', [
         'Model',
         'Rand',
         'Mean',
-        'Div',
-        'OtherModels',
     ])
 
     def __init__(
@@ -84,7 +85,6 @@ class Experiment(object):
             real: list,
             real_trained: np.ndarray,
             model: list,
-            other_models: dict = {},
     ):
         self.experiment_data = None
         if exp_type in ExperimentConstants.TYPES:
@@ -96,15 +96,15 @@ class Experiment(object):
             real_results=real,
             real_trained_results=real_trained,
             model_prediction=model,
-            other_models_predictions=other_models)
+        )
         self.experiment_results = None
 
     def _load(
-            self,
-            real_results: list,
-            real_trained_results: np.ndarray,
-            model_prediction: list,
-            other_models_predictions: dict):
+        self,
+        real_results: list,
+        real_trained_results: np.ndarray,
+        model_prediction: list,
+    ):
         """loads experiment data into ExperimentData object
 
         Args:
@@ -118,15 +118,17 @@ class Experiment(object):
             ValueError: if there is a mismatch in length of any of the arguments
         """
         if validate_multiple_lists_length(
-                real_results,
-                model_prediction,
-                *other_models_predictions.values()):
+            real_results,
+            model_prediction,
+        ):
             size = len(real_results)
-            random_data = BASE_DIST[self.exp_type]["rand"](real_trained_results, size)
-            mean_data = BASE_DIST[self.exp_type]["mean"](real_trained_results, size)
+            random_data = BASE_DIST[self.exp_type]["rand"](
+                real_trained_results, size)
+            mean_data = BASE_DIST[self.exp_type]["mean"](
+                real_trained_results, size)
             self.experiment_data = ExperimentData(
                 real_results, model_prediction, random_data,
-                mean_data, other_models_predictions or {})
+                mean_data)
         else:
             raise length_error(len(real_results))
 
@@ -139,14 +141,9 @@ class Experiment(object):
         Returns:
             score(Score): score object with all the metric calculated scores
         """
-        divergence = _divergence_by_wd(self.experiment_data.Model,
-                                       self.experiment_data.Real)
         self.experiment_results = Score(
             metric(self.experiment_data.Real, self.experiment_data.Model),
             metric(self.experiment_data.Real, self.experiment_data.Rand),
             metric(self.experiment_data.Real, self.experiment_data.Mean),
-            divergence, {
-                k: metric(self.experiment_data.Real, v)
-                for k, v in self.experiment_data.OtherModels.items()
-            })
+        )
         return self.experiment_results

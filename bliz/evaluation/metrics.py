@@ -1,12 +1,11 @@
 import scipy as sp
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, roc_auc_score
-from sklearn.metrics import roc_auc_score
 from bliz.evaluation.constants import MetricsConstants
 from bliz.evaluation.utils import close_enough,\
-                                  validate_multiple_lists_length,\
-                                  samples_to_bin_numbers,\
-                                  is_binary
+    validate_multiple_lists_length,\
+    samples_to_bin_numbers,\
+    is_binary
 
 MSE = mean_squared_error
 ABS_ERR = mean_absolute_error
@@ -253,7 +252,7 @@ def weighted_interpolated_error(
 def inverse_accuracy(y_real, y_pred):
     def inverse_acc(y_r, y_p):
         ineq_sum = 0
-        for i,j in zip(y_r, y_p):
+        for i, j in zip(y_r, y_p):
             if i != j:
                 ineq_sum += 1
         return ineq_sum / len(y_real)
@@ -267,10 +266,17 @@ def inverse_accuracy(y_real, y_pred):
             else:
                 return inverse_acc(y_real, np.round(y_pred))
 
+
 def inverse_roc_auc(y_real, y_pred):
     if is_binary(y_pred):
         raise ValueError("y_pred should be (n, 2) shaped probability vector")
-    return 1 - roc_auc_score(y_real, y_pred)
+    print(y_real.shape)
+    print(y_pred.shape)
+    if len(y_pred.shape) == 2:
+        return 1 - roc_auc_score(y_real, y_pred[:, 1])
+    else:
+        return 1 - roc_auc_score(y_real, y_pred)
+
 
 REGRESSION_METRICS = {
     "mse": mean_squared_error,
@@ -282,6 +288,7 @@ BINARY_CLASSIFICATION_METRICS = {
     "roc_auc": inverse_roc_auc
 }
 
+
 def get_regression_metric(metric: str) -> callable:
     if metric in MetricsConstants.REGRESSION_METRICS:
         return REGRESSION_METRICS[metric]
@@ -290,6 +297,7 @@ def get_regression_metric(metric: str) -> callable:
 def get_binary_classification_metric(metric: str) -> callable:
     if metric in MetricsConstants.BINARY_METRICS:
         return BINARY_CLASSIFICATION_METRICS[metric]
+
 
 __all__ = [
     'discriminability', 'certainty', 'divergency',

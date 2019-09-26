@@ -2,7 +2,7 @@ import logging
 
 log_format = """{"time": "%(asctime)s","level": "%(levelname)s",
 "log_name": "%(name)s", "function": "%(funcName)s","message": "%(message)s"}"""\
-    .strip().replace('\n','')
+    .strip().replace('\n', '')
 
 
 class Logger(object):

@@ -3,5 +3,6 @@ class MetricsConstants:
     REGRESSION_METRICS = ["mse", "abs"]
     BINARY_METRICS = ["roc_auc", "acc"]
 
+
 class ExperimentConstants():
     TYPES = ["reg", "binary"]

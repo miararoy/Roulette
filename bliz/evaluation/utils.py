@@ -107,11 +107,7 @@ def parse_ndarray_as_float_list(arr: np.ndarray) -> list:
     Returns:
         lst(list): list of float
     """
-    try:
-        lst = [float(x) for x in arr]
-    except Exception as e:
-        raise e
-    return lst
+    return arr.tolist()
 
 
 def is_binary(a) -> bool:
@@ -119,7 +115,7 @@ def is_binary(a) -> bool:
         return False
     if (np.bincount(a) == 2
         and (np.max(a) == 1 or np.max(a) == 0)
-        and (np.min(a) == 0 or np.min(a) == 1)):
+            and (np.min(a) == 0 or np.min(a) == 1)):
         return True
     else:
         return False

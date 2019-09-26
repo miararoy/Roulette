@@ -1,13 +1,11 @@
 import json
-import threading
 
 import numpy as np
-import matplotlib.pyplot as plt
 
-from bliz.evaluation.utils import close_enough, parse_ndarray_as_float_list
+from bliz.evaluation.utils import parse_ndarray_as_float_list
 from bliz.evaluation.experiment import Experiment
 from bliz.evaluation.simulation_data import Metrics
-from bliz.evaluation.metrics import discriminability, divergency, certainty
+from bliz.evaluation.metrics import discriminability, certainty
 from bliz.evaluation.plotting.hist import single_hist
 from bliz.evaluation.plotting.result_data import ResultData
 
@@ -16,20 +14,9 @@ class MonteCarloSimulation(object):
     """facilitates the experiments conducted, and calculating the metrics
     """
 
-    _instance = None
-    _lock = threading.Lock()
-
-    def __new__(cls):
-        if MonteCarloSimulation._instance is None:
-            with MonteCarloSimulation._lock:
-                if MonteCarloSimulation._instance is None:
-                    MonteCarloSimulation._instance = super(
-                        MonteCarloSimulation, cls).__new__(cls)
-        return MonteCarloSimulation._instance
-
     def __init__(
             self,
-            exp_type: str='reg'
+            exp_type: str
     ):
         """initiates monte carlo simulation
 
@@ -48,7 +35,7 @@ class MonteCarloSimulation(object):
                         real: list,
                         real_trained: np.ndarray,
                         model: list,
-                        others: dict = {}):
+                        ):
         """loading a single experiment to simulation
 
         Args:
@@ -59,7 +46,7 @@ class MonteCarloSimulation(object):
             others(dict): dictionary of other models predictions.
         """
         self.experiments.append(
-            Experiment(self.exp_type, real, real_trained, model, others))
+            Experiment(self.exp_type, real, real_trained, model))
 
     def digest(self, metric):
         """calculates the full simulation results on the experiments
@@ -75,21 +62,15 @@ class MonteCarloSimulation(object):
         self.scores["model"] = []
         self.scores["rand"] = []
         self.scores["mean"] = []
-        self.scores["div"] = []
         for s in _scores:
             self.scores["model"].append(s.Model)
             self.scores["rand"].append(s.Rand)
             self.scores["mean"].append(s.Mean)
-            self.scores["div"].append(s.Div)
-            if s.OtherModels:
-                for k in s.OtherModels:
-                    self.scores[k] = [s.OtherModels[k] for s in _scores]
         self.metrics = Metrics(
             discriminability(self.scores["model"], self.scores["mean"],
                              self.scores["rand"]),
             certainty(self.scores["model"], self.scores["rand"]),
-            divergency(self.scores['div']))
-        self.scores.pop('div', None)
+        )
 
     def get_metrics(self):
         """returns the Metrics namedTuple
@@ -109,7 +90,6 @@ class MonteCarloSimulation(object):
             return {
                 "discriminability": self.metrics.Discriminability,
                 "certainty": self.metrics.Certainty,
-                "divergency": self.metrics.Divergency,
             }
         else:
             return None
@@ -144,10 +124,6 @@ class MonteCarloSimulation(object):
                 "model": parse_ndarray_as_float_list(exp.experiment_data.Model),
                 "mean": parse_ndarray_as_float_list(exp.experiment_data.Mean),
                 "rand": parse_ndarray_as_float_list(exp.experiment_data.Rand),
-                "others": {
-                    k: parse_ndarray_as_float_list(v)
-                    for k, v in exp.experiment_data.OtherModels.items()
-                }
             }
         with open(path, 'w+') as output_file:
             output_file.write(json.dumps(experiment_summery))

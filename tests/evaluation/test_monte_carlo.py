@@ -8,31 +8,23 @@ real = np.asarray([1, 2, 3])
 model = np.asarray([1.1, 2.2, 3.3])
 rand = np.asarray([4, 5, 6])
 
-MC = MonteCarloSimulation()
+MC = MonteCarloSimulation(exp_type="reg")
 MC.load_experiment(
     real,
     real,
-    model,
-    others={
-        "rand_a": rand,
-        "rand_b": rand * 2
-    })
+    model
+)
 MC.load_experiment(
     real,
     real,
-    model,
-    others={
-        "rand_a": rand,
-        "rand_b": real
-    })
+    model
+)
 MC.digest(mean_squared_error)
 
 
 def test_monte_carlo_score():
     expected = {
         'model': [0.04666666666666666, 0.04666666666666666],
-        'rand_a': [9.0, 9.0],
-        'rand_b': [64.66666666666667, 0.0]
     }
     for k in expected:
         if k != "rand":
@@ -47,8 +39,7 @@ def test_monte_carlo_metrics():
 def test_as_dict():
     MC_as_dict = MC.metrics_as_dict()
     assert isinstance(MC_as_dict, dict)
-    assert ("discriminability" in MC_as_dict and "certainty" in MC_as_dict
-            and "divergency" in MC_as_dict)
+    assert ("discriminability" in MC_as_dict and "certainty" in MC_as_dict)
 
 
 def test_to_json():
@@ -75,16 +66,10 @@ def test_plotting():
     passed = True
     MC.load_experiment([4.5, 5.4, 1.1],
                        np.asarray([4.5, 5.4, 1.1]), [4, 2, 1],
-                       others={
-                           "rand_a": [1, 1, 1],
-                           "rand_b": [x * 1.22 for x in rand]
-    })
+                       )
     MC.load_experiment([5, 3, 1],
                        np.asarray([5, 3, 1]), [1, 1, 1],
-                       others={
-                           "rand_a": [0.3, 0.3, 0.3],
-                           "rand_b": [0.1, 0.1, 9]
-    })
+                       )
     MC.digest(mean_squared_error)
     try:
         MC.plot("/tmp")
