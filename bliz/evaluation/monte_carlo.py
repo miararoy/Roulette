@@ -1,10 +1,8 @@
-# import os
 import json
 import threading
 
 import numpy as np
 import matplotlib.pyplot as plt
-# from sklearn.metrics import mean_squared_error
 
 from bliz.evaluation.utils import close_enough, parse_ndarray_as_float_list
 from bliz.evaluation.experiment import Experiment
@@ -31,7 +29,7 @@ class MonteCarloSimulation(object):
 
     def __init__(
             self,
-            W: list = [0.33333, 0.33333, 0.33333],
+            exp_type: str='reg'
     ):
         """initiates monte carlo simulation
 
@@ -44,21 +42,12 @@ class MonteCarloSimulation(object):
         self.experiments = []
         self.scores = {}
         self.metrics = None
-        if len(W) == len(Metrics._fields):
-            if close_enough(sum(W), 1.0, 4):
-                self.W = W
-            else:
-                ValueError("W, weights should sum to 1.0 and not {}".format(
-                    sum(W)))
-        else:
-            raise ValueError("W should be of len {}".format(
-                len(Metrics._fields)))
+        self.exp_type = exp_type
 
     def load_experiment(self,
                         real: list,
                         real_trained: np.ndarray,
                         model: list,
-                        rand=1,
                         others: dict = {}):
         """loading a single experiment to simulation
 
@@ -70,7 +59,7 @@ class MonteCarloSimulation(object):
             others(dict): dictionary of other models predictions.
         """
         self.experiments.append(
-            Experiment(real, real_trained, model, rand, others))
+            Experiment(self.exp_type, real, real_trained, model, others))
 
     def digest(self, metric):
         """calculates the full simulation results on the experiments
@@ -128,7 +117,6 @@ class MonteCarloSimulation(object):
     def metrics_to_json(
             self,
             path: str,
-            # filename: str,
     ):
         """saves MC result metrics as .json file
 
@@ -136,8 +124,6 @@ class MonteCarloSimulation(object):
             path(str): path to save json file
             filename(str): filename to be used in saving
         """
-        # with open(os.path.join(path, "{}.json".format(filename)), 'w+') as
-        # output_file:
         with open(path, 'w+') as output_file:
             output_file.write(json.dumps(self.metrics_as_dict()))
 

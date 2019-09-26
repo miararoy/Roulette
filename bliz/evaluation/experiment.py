@@ -7,6 +7,7 @@ import numpy as np
 from bliz.evaluation.simulation_data import ExperimentData, Score
 from bliz.evaluation.utils import validate_multiple_lists_length
 from bliz.evaluation.metrics import WD
+from bliz.evaluation.constants import ExperimentConstants
 
 random.seed(int(time()) % 10**4)
 
@@ -34,6 +35,27 @@ def _divergence_by_wd(dist, ref):
     else:
         return np.inf
 
+def reg_mean(y, size):
+    return np.full(size, np.asarray(y).mean())
+
+def binary_mean(y, size):
+    return np.full(size, np.bincount(y).argmax())
+
+def choice_rand(y, size):
+    return np.random.choice(y, size=size)
+
+
+BASE_DIST = {
+    "reg": {
+        "mean": reg_mean,
+        "rand": choice_rand
+    },
+    "binary": {
+        "mean": binary_mean,
+        "rand": choice_rand
+    }
+}
+
 
 class Experiment(object):
     """
@@ -58,18 +80,22 @@ class Experiment(object):
 
     def __init__(
             self,
+            exp_type: str,
             real: list,
             real_trained: np.ndarray,
             model: list,
-            rand_scale: int,
             other_models: dict = {},
     ):
         self.experiment_data = None
+        if exp_type in ExperimentConstants.TYPES:
+            self.exp_type = exp_type
+        else:
+            raise ValueError("exp_type must be one of: [{}]".format(
+                ExperimentConstants.TYPES))
         self._load(
             real_results=real,
             real_trained_results=real_trained,
             model_prediction=model,
-            random_scale=rand_scale,
             other_models_predictions=other_models)
         self.experiment_results = None
 
@@ -78,8 +104,6 @@ class Experiment(object):
             real_results: list,
             real_trained_results: np.ndarray,
             model_prediction: list,
-            # if not passed will generate a list in len(real_results) of [0,1)
-            random_scale,
             other_models_predictions: dict):
         """loads experiment data into ExperimentData object
 
@@ -97,15 +121,12 @@ class Experiment(object):
                 real_results,
                 model_prediction,
                 *other_models_predictions.values()):
-            random_data = [
-                random_scale * random.random()
-                for i in range(len(real_results))
-            ]
-            mean_result = real_trained_results.mean()
+            size = len(real_results)
+            random_data = BASE_DIST[self.exp_type]["rand"](real_trained_results, size)
+            mean_data = BASE_DIST[self.exp_type]["mean"](real_trained_results, size)
             self.experiment_data = ExperimentData(
                 real_results, model_prediction, random_data,
-                [mean_result] * len(real_results), other_models_predictions
-                or {})
+                mean_data, other_models_predictions or {})
         else:
             raise length_error(len(real_results))
 

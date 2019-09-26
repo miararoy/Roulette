@@ -114,6 +114,17 @@ def parse_ndarray_as_float_list(arr: np.ndarray) -> list:
     return lst
 
 
+def is_binary(a) -> bool:
+    if len(np.asarray(a).shape) >= 1:
+        return False
+    if (np.bincount(a) == 2
+        and (np.max(a) == 1 or np.max(a) == 0)
+        and (np.min(a) == 0 or np.min(a) == 1)):
+        return True
+    else:
+        return False
+
+
 __all__ = [
     "samples_to_bin_numbers", "_sample_to_bin", "close_enough",
     "validate_multiple_lists_length"

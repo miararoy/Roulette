@@ -1,9 +1,12 @@
 import scipy as sp
 import numpy as np
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-from .utils import close_enough,\
-    validate_multiple_lists_length,\
-    samples_to_bin_numbers
+from sklearn.metrics import mean_absolute_error, mean_squared_error, roc_auc_score
+from sklearn.metrics import roc_auc_score
+from bliz.evaluation.constants import MetricsConstants
+from bliz.evaluation.utils import close_enough,\
+                                  validate_multiple_lists_length,\
+                                  samples_to_bin_numbers,\
+                                  is_binary
 
 MSE = mean_squared_error
 ABS_ERR = mean_absolute_error
@@ -247,7 +250,48 @@ def weighted_interpolated_error(
         raise ValueError("error type must be in {}".format(ERR_TYPES))
 
 
+def inverse_accuracy(y_real, y_pred):
+    def inverse_acc(y_r, y_p):
+        ineq_sum = 0
+        for i,j in zip(y_r, y_p):
+            if i != j:
+                ineq_sum += 1
+        return ineq_sum / len(y_real)
+
+    if len(y_pred) == len(y_real):
+        if is_binary(y_pred):
+            return inverse_acc(y_real, y_pred)
+        else:
+            if (len(y_pred.shape) == 2 and y_pred.shape[1] == 2):
+                return inverse_acc(y_real, np.argmax(y_pred, axis=1))
+            else:
+                return inverse_acc(y_real, np.round(y_pred))
+
+def inverse_roc_auc(y_real, y_pred):
+    if is_binary(y_pred):
+        raise ValueError("y_pred should be (n, 2) shaped probability vector")
+    return 1 - roc_auc_score(y_real, y_pred)
+
+REGRESSION_METRICS = {
+    "mse": mean_squared_error,
+    "abs": mean_absolute_error
+}
+
+BINARY_CLASSIFICATION_METRICS = {
+    "acc": inverse_accuracy,
+    "roc_auc": inverse_roc_auc
+}
+
+def get_regression_metric(metric: str) -> callable:
+    if metric in MetricsConstants.REGRESSION_METRICS:
+        return REGRESSION_METRICS[metric]
+
+
+def get_binary_classification_metric(metric: str) -> callable:
+    if metric in MetricsConstants.BINARY_METRICS:
+        return BINARY_CLASSIFICATION_METRICS[metric]
+
 __all__ = [
     'discriminability', 'certainty', 'divergency',
-    'weighted_interpolated_error'
+    'weighted_interpolated_error', "get_regression_metric"
 ]

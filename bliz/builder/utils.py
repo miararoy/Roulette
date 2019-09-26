@@ -93,3 +93,14 @@ def is_regression_metric(metric: callable) -> bool:
         return False
     else:
         return True
+
+
+def is_binary_classification_metric(metric: callable) -> bool:
+    real = np.asarray([1, 1, 0])
+    pred_close = np.asarray([1, 0, 0])
+    pred_far = np.asarray([0, 0, 1])
+    if (not metric(real, real) == 0.0 and
+            not metric(real, real) < metric(real, pred_close) < metric(real, pred_far)):
+        return False
+    else:
+        return True

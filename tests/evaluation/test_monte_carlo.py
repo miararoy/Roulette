@@ -4,22 +4,22 @@ from sklearn.metrics import mean_squared_error
 
 from bliz.evaluation.monte_carlo import MonteCarloSimulation
 
-real = [1, 2, 3]
-model = [1.1, 2.2, 3.3]
-rand = [4, 5, 6]
+real = np.asarray([1, 2, 3])
+model = np.asarray([1.1, 2.2, 3.3])
+rand = np.asarray([4, 5, 6])
 
 MC = MonteCarloSimulation()
 MC.load_experiment(
     real,
-    np.asanyarray([real]),
+    real,
     model,
     others={
         "rand_a": rand,
-        "rand_b": [x * 2 for x in rand]
+        "rand_b": rand * 2
     })
 MC.load_experiment(
     real,
-    np.asanyarray([real]),
+    real,
     model,
     others={
         "rand_a": rand,
