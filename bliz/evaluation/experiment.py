@@ -41,8 +41,7 @@ def reg_mean(y, size):
 
 
 def binary_mean(y, size):
-    return np.full(size, np.asarray(y).mean())
-    # return np.full(size, np.bincount(y).argmax())
+    return np.full(size, np.bincount(y).argmax())
 
 
 def choice_rand(y, size):
