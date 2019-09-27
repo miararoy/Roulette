@@ -270,8 +270,6 @@ def inverse_accuracy(y_real, y_pred):
 def inverse_roc_auc(y_real, y_pred):
     if is_binary(y_pred):
         raise ValueError("y_pred should be (n, 2) shaped probability vector")
-    print(y_real.shape)
-    print(y_pred.shape)
     if len(y_pred.shape) == 2:
         return 1 - roc_auc_score(y_real, y_pred[:, 1])
     else:
@@ -285,7 +283,7 @@ REGRESSION_METRICS = {
 
 BINARY_CLASSIFICATION_METRICS = {
     "acc": inverse_accuracy,
-    "roc_auc": inverse_roc_auc
+    # "roc_auc": inverse_roc_auc
 }
 
 

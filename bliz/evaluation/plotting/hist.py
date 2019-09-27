@@ -21,7 +21,6 @@ def save_multiple_hist(
                 )
                 plot.set(ylim=(0, len(d.data) / 10))
                 plot_path = os.path.join(path, plot_name)
-                print("saving... {}".format(plot_path))
                 plot.figure.savefig(plot_path, transparent=True, dpi=300)
                 plot.clear()
             else:
@@ -48,6 +47,7 @@ def single_hist(
                     kde_kws={"label": d.name})
                 if title:
                     plot.set_title(title)
+                plot.set(xlabel='Error', ylabel='frequency')
             else:
                 raise ValueError("data should be of type RestultData")
         if path:
@@ -55,7 +55,6 @@ def single_hist(
                 os.makedirs(path)
             plot_name = "{}_plot.png".format(name)
             plot_path = os.path.join(path, plot_name)
-            print("saving... {}".format(plot_path))
             plot.figure.savefig(plot_path, dpi=300)
         else:
             return plot
