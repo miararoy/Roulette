@@ -11,9 +11,8 @@ from bliz.builder.save_load_model import load_model
 from bliz.builder.utils import is_regression_metric, is_binary_classification_metric
 from bliz.evaluation import MonteCarloSimulation
 from bliz.evaluation.metrics import get_regression_metric, get_binary_classification_metric
+from bliz.evaluation.norms import get_normalizer
 from bliz.logger import Logger
-
-logger = Logger("builder").get_logger()
 
 BUILD_DIR_NAME = "build"
 
@@ -145,9 +144,22 @@ class RegressionBuilder(Builder):
         data: pd.core.frame.DataFrame,
         target: str,
         metric: Union[str, callable],
+        normalizer: Union[str, callable]=None,
         index: str = None
     ):
-        super().__init__(path_to_model, "reg", data, target, metric)
+        if normalizer:
+            self.logger.info("normalizing data target, this will duplicate data space in mem")
+            norm_data = data.copy()
+            if hasattr(normalizer, "__call__"):
+                norm_data[target] = normalizer(norm_data[target])
+            elif isinstance(normalizer, str):
+                norm_data[target] = get_normalizer(normalizer)(norm_data[target])
+            else:
+                raise ValueError("normalizer should be either str or callable")
+            super().__init__(path_to_model, "reg", norm_data, target, metric)            
+        else:
+            super().__init__(path_to_model, "reg", data, target, metric)
+        
         if hasattr(metric, "__call__"):
             assert is_regression_metric(metric)
             self._metric = metric
