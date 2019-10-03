@@ -1,7 +1,10 @@
+import os
+import pickle
 from typing import Union
 from time import time
 from abc import ABC, abstractmethod
 
+import joblib
 import numpy as np
 from pandas.core.frame import DataFrame
 
@@ -34,7 +37,21 @@ class BaseModel(ABC):
         self,
         base_path,
     ):
-        return ModelFileHandler(model=self).save(base_path)
+        model_dir = os.path.join(base_path, self.model_name)
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+        model_path = os.path.join(model_dir, "{}.joblib".format(self.model_name))
+        try:
+            with open(model_path, 'wb') as model_file:
+                joblib.dump(
+                    self,
+                    model_file,
+                )
+            return model_dir
+        except pickle.PicklingError as e:
+            print("Cannot picke model at {p} due to {e}".format(
+                p=model_path, e=e))
+            raise e
 
     def load(
         self,

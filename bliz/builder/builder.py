@@ -88,6 +88,9 @@ class Builder(object):
         self.logger.info("Finalzing model")
         Model = load_model(self.path_to_model)
         self.logger.info("Training model on all data")
+        final_model = Model()
+        final_model.fit(X, y)
+        final_model.save("playground")
         self.final_model = Model()
         self.final_model.fit(X, y)
 
@@ -104,6 +107,8 @@ class Builder(object):
 
     def save(self, plot=True, summery=False, data=False):
         if self.final_model:
+            print("saving model")
+            print(type(self.final_model))
             model_dir = self.final_model.save(
                 os.path.join(self.path_to_model, BUILD_DIR_NAME))
             self.logger.info("saved model to {}".format(model_dir))
@@ -144,7 +149,7 @@ class RegressionBuilder(Builder):
         data: pd.core.frame.DataFrame,
         target: str,
         metric: Union[str, callable],
-        normalizer: Union[str, callable]=None,
+        normalizer: Union[str, callable] = None,
         index: str = None
     ):
         if normalizer:
@@ -156,10 +161,9 @@ class RegressionBuilder(Builder):
                 norm_data[target] = get_normalizer(normalizer)(norm_data[target])
             else:
                 raise ValueError("normalizer should be either str or callable")
-            super().__init__(path_to_model, "reg", norm_data, target, metric)            
+            super().__init__(path_to_model, "reg", norm_data, target, metric)
         else:
             super().__init__(path_to_model, "reg", data, target, metric)
-        
         if hasattr(metric, "__call__"):
             assert is_regression_metric(metric)
             self._metric = metric

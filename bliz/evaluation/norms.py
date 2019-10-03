@@ -15,6 +15,7 @@ NORM_MAP = {
     "min_max": min_max_norm
 }
 
+
 def get_normalizer(normalizer: str):
     if normalizer in NORM_MAP:
         return NORM_MAP[normalizer]
