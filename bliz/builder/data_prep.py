@@ -26,11 +26,23 @@ def prepare_data_for_training(
 
     """
     if index_column:
-        _df = df.set_index(index_column)
+        if index_column in df.columns:
+            _df = df.set_index(index_column)
+        else:
+            raise KeyError("{} not in dataframe columns: [{}]".format(
+                index_column,
+                df.columns
+            ))
     else:
         _df = df
-    _target = _df[target]
-    _data = _df.drop(target, axis=1)
+    if target in df.columns:
+        _target = _df[target]
+        _data = _df.drop(target, axis=1)
+    else:
+        raise KeyError("{} not in dataframe columns: [{}]".format(
+            target,
+            df.columns
+        ))
     if validation_test_size == 0:
         _x, test_x, _y, test_y = _data, pd.DataFrame(), _target, pd.Series()
     else:
