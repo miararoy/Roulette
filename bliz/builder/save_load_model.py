@@ -23,7 +23,6 @@ class ModelFileHandler(object):
             os.makedirs(model_dir)
         model_path = os.path.join(model_dir, "{}.joblib".format(model_name))
         try:
-            # out = self.model.model
             out = self.model
             print("trying to pickle {} of type {}".format(out, type(out)))
             with open(model_path, 'wb') as model_file:
