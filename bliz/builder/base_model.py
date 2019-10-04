@@ -40,7 +40,9 @@ class BaseModel(ABC):
         model_dir = os.path.join(base_path, self.model_name)
         if not os.path.exists(model_dir):
             os.makedirs(model_dir)
-        model_path = os.path.join(model_dir, "{}.joblib".format(self.model_name))
+        model_path = os.path.join(
+            model_dir, "{}.joblib".format(
+                self.model_name))
         try:
             with open(model_path, 'wb') as model_file:
                 joblib.dump(

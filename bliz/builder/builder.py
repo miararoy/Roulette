@@ -79,6 +79,9 @@ class Builder(object):
         self.result = self.MC_simulation.metrics_as_dict()
 
     def finalize_model(self,):
+        """trains the model on the entire dataset
+
+        """
         X, y, _, _ = prepare_data_for_training(
             df=self.data,
             target=self.target,
@@ -95,17 +98,36 @@ class Builder(object):
         self.final_model.fit(X, y)
 
     def get_results(self) -> dict:
+        """returns the building stage results
+
+        Returns:
+            results(dict): a dictionary with the model building results
+
+        """
         if self.result:
             return self.result
         else:
             raise RuntimeError("You must use build() to get results")
 
     def plot(self, title=None):
+        """plots the simulation histogram summery to screen
+
+        Args:
+            title(str): plot's title
+
+        """
         plt.clf()
         self.MC_simulation.plot(title=title)
         plt.show()
 
     def save(self, plot=True, summery=False, data=False):
+        """Saves the model to the model directory
+
+        Args:
+            plot(bool): saves the simulation histogram as png default True
+            summery(bool): saves the summry of all experiments ran default False
+            data(bool): saves the data used in traininig default False
+        """
         if self.final_model:
             print("saving model")
             print(type(self.final_model))
@@ -153,12 +175,14 @@ class RegressionBuilder(Builder):
         index: str = None
     ):
         if normalizer:
-            self.logger.info("normalizing data target, this will duplicate data space in mem")
+            self.logger.info(
+                "normalizing data target, this will duplicate data space in mem")
             norm_data = data.copy()
             if hasattr(normalizer, "__call__"):
                 norm_data[target] = normalizer(norm_data[target])
             elif isinstance(normalizer, str):
-                norm_data[target] = get_normalizer(normalizer)(norm_data[target])
+                norm_data[target] = get_normalizer(
+                    normalizer)(norm_data[target])
             else:
                 raise ValueError("normalizer should be either str or callable")
             super().__init__(path_to_model, "reg", norm_data, target, metric)

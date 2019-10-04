@@ -20,9 +20,9 @@ def prepare_data_for_training(
         validation_test_size(float): test set size 0.0-1.0 if 0 all will be training set
             defaults to 0.2
         verbose(bool): prints out the shape of test and train datasets
-    
+
     Returns:
-        _x, test_x, _y, test_y: a tuple of datasets - train, test 
+        _x, test_x, _y, test_y: a tuple of datasets - train, test
 
     """
     if index_column:

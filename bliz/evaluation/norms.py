@@ -6,7 +6,7 @@ def min_max_norm(y):
 
     Args:
         y(array-like): an array of int or floats
-    
+
     Returns:
         out(array-like): a normalized array
 
@@ -32,7 +32,7 @@ def get_normalizer(normalizer: str):
 
     Args:
         normalizer(str): normalizer identifier key
-    
+
     Returns:
         normalizer(Callable): a normalizing method
 
