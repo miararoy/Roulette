@@ -38,8 +38,3 @@ class DataPrepTestCase(unittest.TestCase):
             a
         )
         np.testing.assert_array_almost_equal(t, self.expected_target)
-
-    def test_indexed(self):
-        a, at, b, bt = prepare_data_for_training(
-            self.df, 
-        )
