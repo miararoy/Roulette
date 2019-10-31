@@ -49,9 +49,9 @@ builder = RegressionBuilder(
 ### Building model
 
 ```python
-good_builder.build(n_experiments=1000)
-good_builder.result # will return a dictionary {'discriminability': 0.8840, 'certainty': 8.245}
-good_builder.plot()
-good_builder.finalize_model() # runs a model build on the entire dataset
-good_builder.save() # will create a local artifact on 'path_to_model_file/builder'
+builder.build(n_experiments=1000)
+builder.result # will return a dictionary {'discriminability': 0.8840, 'certainty': 8.245}
+builder.plot()
+builder.finalize_model() # runs a model build on the entire dataset
+builder.save() # will create a local artifact on 'path_to_model_file/builder'
 ```
