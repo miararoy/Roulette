@@ -22,11 +22,8 @@ We demonstrate the use of regression builder, binary calssification is reletavel
 Roulette works with a single dataframe, with all the features and the target.
 
 ```python
-from sklearn.metrics import mean_squared_error
 from sklearn.datasets import load_boston
-import seaborn as sns
 import pandas as pd
-import numpy as np
 
 boston = load_boston()
 data = pd.DataFrame(boston.data)
