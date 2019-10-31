@@ -8,7 +8,7 @@ import joblib
 import numpy as np
 from pandas.core.frame import DataFrame
 
-from bliz.builder.save_load_model import ModelFileHandler
+from roulette.builder.save_load_model import ModelFileHandler
 
 
 class BaseModel(ABC):

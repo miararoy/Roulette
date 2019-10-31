@@ -1,4 +1,4 @@
-from bliz.evaluation.utils import close_enough,\
+from roulette.evaluation.utils import close_enough,\
     validate_multiple_lists_length,\
     samples_to_bin_numbers
 

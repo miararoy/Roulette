@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 
 
-from bliz.evaluation.monte_carlo import MonteCarloSimulation
+from roulette.evaluation.monte_carlo import MonteCarloSimulation
 
 real = np.asarray([1, 2, 3])
 model = np.asarray([1.1, 2.2, 3.3])

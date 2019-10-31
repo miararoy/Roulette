@@ -2,12 +2,12 @@ import json
 
 import numpy as np
 
-from bliz.evaluation.utils import parse_ndarray_as_float_list
-from bliz.evaluation.experiment import Experiment
-from bliz.evaluation.simulation_data import Metrics
-from bliz.evaluation.metrics import discriminability, certainty
-from bliz.evaluation.plotting.hist import single_hist
-from bliz.evaluation.plotting.result_data import ResultData
+from roulette.evaluation.utils import parse_ndarray_as_float_list
+from roulette.evaluation.experiment import Experiment
+from roulette.evaluation.simulation_data import Metrics
+from roulette.evaluation.metrics import discriminability, certainty
+from roulette.evaluation.plotting.hist import single_hist
+from roulette.evaluation.plotting.result_data import ResultData
 
 
 class MonteCarloSimulation(object):

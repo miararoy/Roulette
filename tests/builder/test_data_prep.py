@@ -2,7 +2,7 @@ import unittest
 import pandas as pd
 import numpy as np
 
-from bliz.builder.data_prep import prepare_data_for_training
+from roulette.builder.data_prep import prepare_data_for_training
 
 
 class DataPrepTestCase(unittest.TestCase):

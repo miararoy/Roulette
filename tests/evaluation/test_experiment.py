@@ -1,9 +1,9 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
-from bliz.evaluation.utils import close_enough
-from bliz.evaluation.experiment import Experiment, reg_mean, binary_mean, BASE_DIST
-from bliz.evaluation.constants import ExperimentConstants
+from roulette.evaluation.utils import close_enough
+from roulette.evaluation.experiment import Experiment, reg_mean, binary_mean, BASE_DIST
+from roulette.evaluation.constants import ExperimentConstants
 
 
 real = np.asarray([1, 2, 3])

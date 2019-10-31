@@ -2,15 +2,15 @@ from setuptools import setup
 
 setup(
     # Needed to silence warnings (and to be a worthwhile package)
-    name='bliz',
-    url='https://github.com/miararoy/bliz',
+    name='roulette-ml',
+    url='https://github.com/miararoy/roulette',
     author='Roy Miara',
     author_email='miararoy@gmail.com',
     # Needed to actually package something
     packages=[
-        "bliz.builder",
-        "bliz.evaluation",
-        "bliz.evaluation.plotting"
+        "roulette.builder",
+        "roulette.evaluation",
+        "roulette.evaluation.plotting"
     ],
     # Needed for dependencies
     install_requires=[

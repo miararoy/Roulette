@@ -1,9 +1,9 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from bliz.evaluation.metrics import _interpolate_bins,\
+from roulette.evaluation.metrics import _interpolate_bins,\
     weighted_interpolated_error,\
     get_weight_metric
-from bliz.evaluation.utils import close_enough
+from roulette.evaluation.utils import close_enough
 
 
 def test_interploate_bins_unitary():

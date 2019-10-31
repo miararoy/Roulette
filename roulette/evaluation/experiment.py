@@ -4,10 +4,10 @@ from collections import namedtuple
 
 import numpy as np
 
-from bliz.evaluation.simulation_data import ExperimentData, Score
-from bliz.evaluation.utils import validate_multiple_lists_length
-from bliz.evaluation.metrics import WD
-from bliz.evaluation.constants import ExperimentConstants
+from roulette.evaluation.simulation_data import ExperimentData, Score
+from roulette.evaluation.utils import validate_multiple_lists_length
+from roulette.evaluation.metrics import WD
+from roulette.evaluation.constants import ExperimentConstants
 
 random.seed(int(time()) % 10**4)
 

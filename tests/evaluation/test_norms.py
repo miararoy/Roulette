@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from bliz.evaluation.norms import min_max_norm, get_normalizer
+from roulette.evaluation.norms import min_max_norm, get_normalizer
 
 
 def test_min_max_norm():

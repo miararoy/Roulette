@@ -6,13 +6,13 @@ import pandas as pd
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from bliz.builder.data_prep import prepare_data_for_training
-from bliz.builder.save_load_model import load_model
-from bliz.builder.utils import is_regression_metric, is_binary_classification_metric
-from bliz.evaluation import MonteCarloSimulation
-from bliz.evaluation.metrics import get_regression_metric, get_binary_classification_metric
-from bliz.evaluation.norms import get_normalizer
-from bliz.logger import Logger
+from roulette.builder.data_prep import prepare_data_for_training
+from roulette.builder.save_load_model import load_model
+from roulette.builder.utils import is_regression_metric, is_binary_classification_metric
+from roulette.evaluation import MonteCarloSimulation
+from roulette.evaluation.metrics import get_regression_metric, get_binary_classification_metric
+from roulette.evaluation.norms import get_normalizer
+from roulette.logger import Logger
 
 BUILD_DIR_NAME = "build"
 

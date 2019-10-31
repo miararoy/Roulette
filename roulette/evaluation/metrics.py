@@ -1,8 +1,8 @@
 import scipy as sp
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, roc_auc_score
-from bliz.evaluation.constants import MetricsConstants
-from bliz.evaluation.utils import close_enough,\
+from roulette.evaluation.constants import MetricsConstants
+from roulette.evaluation.utils import close_enough,\
     validate_multiple_lists_length,\
     samples_to_bin_numbers,\
     is_binary
