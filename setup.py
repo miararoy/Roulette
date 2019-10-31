@@ -9,7 +9,8 @@ setup(
     # Needed to actually package something
     packages=[
         "bliz.builder",
-        "bliz.evaluation"
+        "bliz.evaluation",
+        "bliz.evaluation.plotting"
     ],
     # Needed for dependencies
     install_requires=[
