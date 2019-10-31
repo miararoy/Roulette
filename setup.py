@@ -25,9 +25,9 @@ setup(
     ],
     # *strongly* suggested for sharing
     version='0.1',
-    description='Utilities for dataframes',
+    description='more than a metric',
     # We will also need a readme eventually (there will be a warning)
-    long_description=open('README.md').read(),
+    long_description="TBD",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

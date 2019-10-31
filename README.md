@@ -11,7 +11,7 @@ __Roulette__ is a unified way to evaluate Machine Learning models. At its core, 
 
 Roulette is hosted on PyPi, install using pip
 
-```pip install Roulette```
+```pip install roulette-ml```
 
 ## Usage 
 
