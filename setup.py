@@ -8,6 +8,7 @@ setup(
     author_email='miararoy@gmail.com',
     # Needed to actually package something
     packages=[
+        "roulette",
         "roulette.builder",
         "roulette.evaluation",
         "roulette.evaluation.plotting"
