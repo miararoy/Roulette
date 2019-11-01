@@ -25,7 +25,7 @@ setup(
         'tqdm==4.31.1',
     ],
     # *strongly* suggested for sharing
-    version='0.1',
+    version='0.1.1',
     description='more than a metric',
     # We will also need a readme eventually (there will be a warning)
     long_description="TBD",

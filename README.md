@@ -34,6 +34,8 @@ data['PRICE'] = boston.target
 ### Loading __Roulette__
 
 ```python
+from roulette import RegressionBuilder
+
 builder = RegressionBuilder(
     "path_to_model_file",
     data,
