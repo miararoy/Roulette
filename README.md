@@ -1,5 +1,6 @@
 # Roulette - more than a metric.
 
+
 __Roulette__ is a unified way to evaluate Machine Learning models. At its core, Roulette is using a [Monte Carlo Simulation](https://en.wikipedia.org/wiki/Monte_Carlo_method) (=MCS) to estimate the risks in deploying a ML model to real world. The results of the MCS are aggregated using [Wasserstein Distance](https://en.wikipedia.org/wiki/Wasserstein_metric) (=WD) and result with two metrics:
 
 1. Distinguishability: a measure of accuracy = by how much the model is better than the data-mid-point: mean / most common value. value is in the range [0,1]
