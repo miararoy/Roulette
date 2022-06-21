@@ -15,7 +15,7 @@ setup(
     ],
     # Needed for dependencies
     install_requires=[
-        'numpy==1.15.2',
+        'numpy==1.22.0',
         'pandas==0.25.0',
         'scipy==1.3.0',
         'matplotlib==3.0.2',
