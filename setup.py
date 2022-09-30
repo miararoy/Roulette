@@ -21,7 +21,7 @@ setup(
         'matplotlib==3.0.2',
         'seaborn==0.9.0',
         'scikit-learn==0.21.2',
-        'joblib==0.13.2',
+        'joblib==1.2.0',
         'tqdm==4.31.1',
     ],
     # *strongly* suggested for sharing
